@@ -20,7 +20,7 @@ def consultar_asistente(prompt):
         content=prompt
     )
 
-    response = openai.Thread.run(thread_id=thread.id, model="gpt-4")
+    response = openai.Thread.run(thread_id=thread.id, model="gpt-4o")
     return response['choices'][0]['message']['content']
 
 @app.route("/consultar_asistente", methods=["POST"])
