@@ -8,9 +8,10 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 ASSISTANT_ID = "asst_AQSHLWG4y7WjkvGqT2U6FRKD"
 
 def consultar_asistente(prompt):
-    response = openai.AssistantCompletion.create(
-        assistant=ASSISTANT_ID,
+    response = openai.ChatCompletion.create(
+        model="gpt-4-turbo",
         messages=[
+            {"role": "system", "content": "Actúa como asistente para consultas de inventario médico."},
             {"role": "user", "content": prompt}
         ]
     )
