@@ -1,31 +1,33 @@
-from flask import Flask, request, jsonify
-import openai
+import requests
 import os
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
-ASSISTANT_ID = "asst_AQSHLWG4y7WjkvGqT2U6FRKD"
+API_KEY = os.getenv("OPENAI_API_KEY")
+ASSISTANT_ID = "asst_AQSHLWG4y7WjkvGqT2U6FRKD"  
 
-def consultar_asistente(prompt):
-    response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",
-        messages=[
-            {"role": "system", "content": "Actúa como asistente para consultas de inventario médico."},
-            {"role": "user", "content": prompt}
-        ]
-    )
-    return response.choices[0].message['content']
+@app.route('/consultar_inventario', methods=['POST'])
+def consultar_inventario():
+    user_query = request.json.get("consulta")
 
-@app.route("/consultar_asistente", methods=["POST"])
-def consultar_asistente_endpoint():
-    data = request.json
-    prompt = data.get("prompt")
-    if prompt:
-        respuesta = consultar_asistente(prompt)
+    url = f"https://api.openai.com/v1/assistants/{ASSISTANT_ID}/query"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json",
+        "OpenAI-Beta": "assistants=v2"
+    }
+    data = {
+        "query": user_query
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+
+    if response.status_code == 200:
+        respuesta = response.json().get("respuesta")
         return jsonify({"respuesta": respuesta})
     else:
-        return jsonify({"error": "No se encontró el campo 'prompt' en la solicitud."}), 400
+        return jsonify({"error": "Error al consultar el asistente"}), response.status_code
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
