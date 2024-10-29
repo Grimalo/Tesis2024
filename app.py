@@ -10,7 +10,7 @@ ASSISTANT_ID = "asst_AQSHLWG4y7WjkvGqT2U6FRKD"
 def consultar_asistente(prompt):
     # Llama directamente al Assistant usando el modelo gpt-4 y el ID del Assistant
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model="gpt-4-turbo",
         messages=[
             {"role": "system", "content": "Consulta usando el archivo de inventario de equipos médicos."},
             {"role": "user", "content": prompt}
